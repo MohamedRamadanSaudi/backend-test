@@ -1,100 +1,150 @@
-# Backend Developer Coding Test
+# Node.js Express API with Authentication
 
-Welcome to the coding test for the **Backend Developer role**. This test evaluates your skills in Node.js, Express.js, Express Validator, JWT Authentication, Authorization Middleware, database management, and API design.
+## Installation
 
-## Test Instructions
+1. Clone the repository:
 
-1. **Clone the Repository**: Fork this repository and complete the coding challenges below.
-2. **Complete the Challenges**: Implement the tasks as specified.
-3. **Submit the Solution**: Once you have completed the tasks, push your code to your repository and share the link.
+```bash
+git clone <repository-url>
+cd /backend-test/challenge_1
+```
 
----
+2. Install dependencies:
 
-## Challenge 1: Build a RESTful API with Node.js, Express, Express Validator, and JWT Authentication
+```bash
+npm install
+```
 
-### Objective
-Create a RESTful API using Node.js and Express.js to manage a Product Inventory System with JWT authentication and authorization middleware.
+3. Create a `.env` file in the root directory:
 
-### Requirements
+```env
+PORT=3000
 
-#### Authentication:
-- Use JWT for authentication. Implement a login endpoint (`POST /auth/login`) to generate a JWT token, which will be required to access the protected routes.
+MONGODB_URI=mongodb://localhost:27017/backend-test #local
+DATABASE_PASSWORD=your_database_password_if_the_database_deployed
 
-#### Authorization:
-- Implement authorization middleware to protect routes that require admin access (e.g., adding, updating, and deleting products).
-- Authorization middleware should check the role from the decoded JWT token and ensure only users with the `admin` role can access these routes.
+ADMIN_PASSWORD=your_admin_password
 
-#### Endpoints:
-- **POST /auth/login**: User login (returns a JWT token).
-- **POST /products**: Add a new product (`name`, `category`, `price`, `quantity`). Only accessible to admin.
-- **GET /products**: List all products with pagination (10 products per page).
-- **GET /products/:id**: Get a single product by its ID.
-- **PUT /products/:id**: Update a product. Only accessible to admin.
-- **DELETE /products/:id**: Delete a product. Only accessible to admin.
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=30d
+```
 
-#### Input Validation (using Express Validator):
-- Use Express Validator for validation on the POST and PUT endpoints.
-- Ensure the following validations:
-  - `name` is required.
-  - `category` is optional but should be a string.
-  - `price` should be a positive number.
-  - `quantity` should be a non-negative integer.
+## API Endpoints (you can just import the "backend_test.postman_collection.json" file to any test tool like postman)
 
-#### Database:
-- Use MongoDB for storing product data with the following schema:
+### Seed Admin
+
+```
+POST /admin     - make an admin with email "admin@admin.com" and password that in .env file
+```
+
+### Authentication
+
+```
+POST /auth/login     - User or Admin login
+```
+
+### Users
+
+```
+POST    /user        - Create a user (Admin only)
+GET    /user        - Get all users (Admin only)
+```
+
+### Products
+
+```
+POST   /products          - Create new product (Admin only)
+GET    /products          - Get all products
+GET    /products/:id      - Get product by ID
+PUT    /products/:id      - Update product (Admin only)
+DELETE /products/:id      - Delete product (Admin only)
+```
+
+## Authentication
+
+The API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
+
+```
+Authorization: Bearer <your_token_here>
+```
+
+## Error Handling
+
+The API includes centralized error handling with appropriate status codes and error messages.
+
+Example error response:
 
 ```json
 {
-  "name": String,
-  "category": String,
-  "price": Number,
-  "quantity": Number,
-  "createdAt": Date,
-  "updatedAt": Date
+  "status": "error",
+  "message": "Not authorized to access this route"
 }
 ```
 
-## Features:
-- Implement basic validation for required fields and proper error handling using Express Validator.
-- Ensure security best practices for authentication and authorization.
+## Body in creation
 
----
+### User
 
-## Challenge 2: Database Query Optimization
+```javascript
+{
+    "name": "Mohamed Ramadan",
+    "email": "mo@gmail.com",
+    "password": "test123",
+    "role": "user" //default
+    // "role": "admin"
+}
+```
 
-### Objective
-Write optimized SQL/NoSQL queries to retrieve product data efficiently.
+### Product
 
-Requirements
-SQL Query: (Assuming PostgreSQL)
+```javascript
+{
+  "name": "String",
+  "category": "String",
+  "price": 500,
+  "quantity": 10
+}
+```
 
-Write a query to fetch products with a price between $50 and $200, ordered by price (ascending), with pagination (10 products per page).
-NoSQL Query: (Assuming MongoDB)
+## Data Models
 
-Write a query to retrieve products by category (e.g., "Electronics"), sorted by price in descending order. Limit the result to 5 products per page.
-Optimization:
+### User Model
 
-How would you optimize the queries for high traffic scenarios (e.g., indexing, caching)?
+```javascript
+{
+  name: String,
+  email: String,
+  password: String,
+  role: String,
+  tokenVersion: Number,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
+### Product Model
 
----
+```javascript
+{
+  name: String,
+  category: String,
+  price: Number,
+  quantity: Number,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
-## Submission Instructions
+## Running the Application
 
-1. **Clone This Repository**: Fork this repository and set up your environment.
-2. **Complete the Tasks**: Implement the tasks in the respective directories for each challenge.
-3. **Test Your Work**: Ensure your APIs, authentication, authorization, and queries work as expected.
-4. **Submit Your Solution**: Push your completed code to your public GitHub repository and share the link with us.
+Development mode:
 
+```bash
+npm run start:dev
+```
 
-## Timeline
-You have **2 days** to complete and submit the coding test.
+Production mode:
 
----
-
-## Questions?
-Feel free to reach out if you need clarification.
-
----
-
-Good luck! 🚀
+```bash
+npm start
+```
