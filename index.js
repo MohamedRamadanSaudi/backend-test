@@ -7,14 +7,11 @@ const morgan = require("morgan");
 const connectDB = require('./config/database');
 const AppError = require('./utils/appError');
 const errorHandler = require('./middlewares/errorHandler');
-// const rateLimiter = require('./middlewares/rateLimiter');
-// const HealthCheck = require('./utils/healthCheck');
-// const redisClient = require('./config/redis');
 
 const User = require('./routes/userRoutes');
 const auth = require('./routes/authRoutes');
 const admin = require('./routes/adminRoutes');
-// const Products = require('./routes/productRoutes');
+const Products = require('./routes/productRoutes');
 
 const { default: mongoose } = require('mongoose');
 
@@ -33,7 +30,7 @@ app.use(bodyParser.json());
 app.use('/user', User);
 app.use('/auth', auth);
 app.use('/admin', admin);
-
+app.use('/products', Products);
 
 // Catch-all route handler for undefined routes
 app.all('*', (req, res, next) => {
